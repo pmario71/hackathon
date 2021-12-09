@@ -16,10 +16,6 @@ Tainting windows node:
 kubectl taint nodes aksnpwin000000 os=windows:NoSchedule
 ```
 
-```
-
-```
-
 ## References
 
 * [Guide for scheduling Windows containers in Kubernetes](https://kubernetes.io/docs/setup/production-environment/windows/user-guide-windows-containers/)
