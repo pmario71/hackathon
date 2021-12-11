@@ -26,3 +26,5 @@
 ## Dapr Evaluation
 
 * ongoing ...
+
+[more details](docs/04_dapr_evaluation.md)
