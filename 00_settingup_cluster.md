@@ -5,7 +5,7 @@ information taken from: <https://docs.microsoft.com/en-us/azure/aks/windows-cont
 | Name                             | Value                  |
 |------------------------------|---------------------|
 | resource group               | carbon-1             |
-| network security group  | carbon-1-secgrp | 
+| network security group  | carbon-1-secgrp |
 
 ## Create cluster
 
@@ -39,6 +39,13 @@ az aks nodepool add \
 
 ```cmd
 az aks get-credentials -a --resource-group carbon-1 --name carbon-1
+```
+
+## Starting / Stopping the cluster
+
+```cmd
+az aks start --name carbon-1 --resource-group carbon-1
+az aks stop --name carbon-1 --resource-group carbon-1
 ```
 
 # To remember
