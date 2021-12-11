@@ -6,6 +6,6 @@ namespace Frontend.Server.Services
     {
         IAsyncEnumerable<TestStatusUpdate> SubscribeToTestStatusUpdate();
 
-        Task<TestStatusUpdate> StartTestExecutionAsync();
+        Task<TestStatusUpdate> StartTestExecutionAsync(TestLevel testLevel);
     }
 }

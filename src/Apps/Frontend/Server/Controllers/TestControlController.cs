@@ -30,32 +30,11 @@ namespace Frontend.Server.Controllers
         public async Task<TestStatusUpdate> StartTest(StartTestRequest request)
         {
             // test is going on in background, errors are reported through websocket connection
-            var statusUpdate = await _testExecutionService.StartTestExecutionAsync();
+            var statusUpdate = await _testExecutionService.StartTestExecutionAsync(request.TestLevel);
 
             _logger.LogInformation("Started test execution ...");
 
             return statusUpdate;
-        }
-
-        [HttpGet("/ws")]
-        public async Task Get()
-        {
-            if (HttpContext.WebSockets.IsWebSocketRequest)
-            {
-                using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-
-                var subscription = _testExecutionService.SubscribeToTestStatusUpdate();
-
-                await foreach (var item in subscription)
-                {
-                    var json = JsonSerializer.Serialize(item);
-                    await webSocket.SendAsync(Encoding.UTF8.GetBytes(json), WebSocketMessageType.Text, true, CancellationToken.None);
-                }
-            }
-            else
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            }
         }
     }
 }

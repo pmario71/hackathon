@@ -21,6 +21,8 @@ namespace Frontend.Shared
     {
         public int TestId { get; set; } = 0;
 
+        public TestLevel TestLevel { get; init; }
+
         public string Message { get; set; } = "na";
 
         public bool Completed { get; set; } = false;

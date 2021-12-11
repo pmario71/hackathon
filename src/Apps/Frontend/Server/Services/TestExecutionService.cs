@@ -13,16 +13,40 @@ namespace Frontend.Server.Services
             _channel.Writer.Complete();
         }
 
-        public async Task<TestStatusUpdate> StartTestExecutionAsync()
+        public async Task<TestStatusUpdate> StartTestExecutionAsync(TestLevel testLevel)
         {
             TestStatusUpdate update = new TestStatusUpdate()
             {
+                TestLevel = testLevel,
                 TestId = Interlocked.Increment(ref _testId),
                 Message = "Started test"
             };
-            await _channel.Writer.WriteAsync(update);
+            StartTestExecutionInternal(update);
 
             return update;
+        }
+
+        private void StartTestExecutionInternal(TestStatusUpdate update)
+        {
+            Task.Run(async () =>
+            {
+                // =======================================
+                // test execution goes here
+                // =======================================
+                string typeOfTest = update.TestLevel.ToString();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    await Task.Delay(1000);
+                    update.Message = $"'{typeOfTest}' executing: {i * 10}%";
+
+                    await _channel.Writer.WriteAsync(update);
+                }
+                update.Message = $"test completed!";
+                update.Completed = true;
+
+                await _channel.Writer.WriteAsync(update);
+            });
         }
 
         public async IAsyncEnumerable<TestStatusUpdate> SubscribeToTestStatusUpdate()
@@ -31,18 +55,6 @@ namespace Frontend.Server.Services
             while (true)
             {
                 update = await _channel.Reader.ReadAsync();
-                yield return update;
-
-                for (int i = 0; i < 10; i++)
-                {
-                    await Task.Delay(1000);
-                    update.Message = $"test executing: {i * 10}%";
-
-                    yield return update;
-                }
-                update.Message = $"test completed!";
-                update.Completed = true;
-
                 yield return update;
             }
         }
