@@ -23,6 +23,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseWebSockets();
 
 
 app.MapRazorPages();
