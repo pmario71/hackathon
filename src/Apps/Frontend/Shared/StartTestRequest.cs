@@ -16,4 +16,13 @@ namespace Frontend.Shared
         RegressionTest,
         StressTest,
     }
+
+    public record TestStatusUpdate
+    {
+        public int TestId { get; set; } = 0;
+
+        public string Message { get; set; } = "na";
+
+        public bool Completed { get; set; } = false;
+    }
 }

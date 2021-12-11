@@ -1,5 +1,8 @@
 ﻿@page "/"
 @using Frontend.Shared
+@using System.Net.WebSockets
+@using System.Text
+@using System.Text.Json
 
 @inject HttpClient _httpClient;
 
@@ -37,6 +40,9 @@
 }
 
 @code {
+    CancellationTokenSource _disposalTokenSource = new CancellationTokenSource();
+    ClientWebSocket _webSocket = new ClientWebSocket();
+
     TestStatus _teststatus = new TestStatus();
 
     private async Task OnStartRegressionTest()
@@ -55,6 +61,54 @@
         _teststatus.TestStarted("Started Stress Test!");
     }
 
+    #region WebSocket connection
+    protected override async Task OnInitializedAsync()
+    {
+        string url = $"ws://{_httpClient.BaseAddress.Host}:{_httpClient.BaseAddress.Port}/TestControl/ws";
+
+        try
+        {
+            await _webSocket.ConnectAsync(new Uri(url), _disposalTokenSource.Token);
+            _ = ReceiveLoop();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    async Task ReceiveLoop()
+    {
+        var buffer = new ArraySegment<byte>(new byte[1024]);
+        while (!_disposalTokenSource.IsCancellationRequested)
+        {
+            // Note that the received block might only be part of a larger message. If this applies in your scenario,
+            // check the received.EndOfMessage and consider buffering the blocks until that property is true.
+            // Or use a higher-level library such as SignalR.
+            var received = await _webSocket.ReceiveAsync(buffer, _disposalTokenSource.Token);
+            var receivedAsText = Encoding.UTF8.GetString(buffer.Array, 0, received.Count);
+
+            var testUpdate = JsonSerializer.Deserialize<TestStatusUpdate>(receivedAsText);
+            if (testUpdate.Completed)
+            {
+                _teststatus.TestCompleted(testUpdate.Message);
+            }
+            else
+            {
+                _teststatus.TestStarted(testUpdate.Message);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposalTokenSource.Cancel();
+        _ = _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Bye", CancellationToken.None);
+    }
+    #endregion
+
     class TestStatus
     {
         public bool TestRunning { get; private set; } = false;
@@ -66,7 +120,7 @@
             TestRunning = true;
         }
 
-        public void TestStopped(string message)
+        public void TestCompleted(string message)
         {
             TestStatusMessage = message;
             TestRunning = false;

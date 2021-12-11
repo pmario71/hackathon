@@ -1,8 +1,12 @@
+using Frontend.Server.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddSingleton<ITestExecution, TestExecutionService>();
+builder.Services.AddSingleton<Frontend.Server.Services.WebSocketProcessing>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -25,6 +29,18 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseWebSockets();
 
+app.Use(async (http, next) =>
+{
+    if (http.WebSockets.IsWebSocketRequest)
+    {
+        var socketProcessor = app.Services.GetRequiredService<Frontend.Server.Services.WebSocketProcessing>();
+        await socketProcessor.Process(http);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.MapRazorPages();
 app.MapControllers();
