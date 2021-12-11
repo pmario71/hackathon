@@ -30,9 +30,20 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo Hello, world!
-
+        run: echo Start building image 'frontendserver'
+      
+      # https://github.com/marketplace/actions/azure-container-registry-build
       - name: Azure Container Registry Build
         uses: Azure/acr-build@v1
+        with:
+          service_principal: ${{ secrets.service_principal }}
+          service_principal_password: ${{ secrets.service_principal_password }}
+          tenant: ${{ secrets.tenant }}
+          registry: ${{ secrets.registry }}
+          repository: ${{ secrets.repository }}
+          image: frontendserver
+          git_access_token: ${{ secrets.git_access_token }}
+          folder: /hackathon/src/Apps
+          dockerfile: /hackathon/src/Apps/Frontend/Server/dockerfile
 
 
