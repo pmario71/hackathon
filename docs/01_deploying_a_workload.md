@@ -2,17 +2,18 @@
 
 ## Use nodeSelector to deploy on linux node
 
-```
+```yaml
 nodeSelector:
     "kubernetes.io/os": linux
 ```
+
 alternatively use:  `"kubernetes.io/os": windows`
 
 ## Use taints/tolerations for windows workloads
 
 Tainting windows node:
 
-```
+```cmd
 kubectl taint nodes aksnpwin000000 os=windows:NoSchedule
 ```
 

@@ -50,9 +50,9 @@ az aks stop --name carbon-1 --resource-group carbon-1
 
 # To remember
 
-to reload profile:
+to reload profile for shell:
 
-```
+```cmd
 profile:  ~/.profile
 reload profile:  source ~/.bash
 ```

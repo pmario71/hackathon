@@ -4,6 +4,11 @@
 
 ```cmd
 linkerd viz install | kubectl apply -f -
+```
+
+### Grafana Dashboard
+
+```cmd
 linkerd viz dashboard &
 ```
 
@@ -17,7 +22,7 @@ linkerd jaeger install | kubectl apply -f -
 
 * meshing the DemoApp did not work
 * found now information on linkerd slack:
-   ![no windows pod support in linkerd](.\images\linkerd-slack-no-windows.png)
+   ![no windows pod support in linkerd](/images/linkerd-slack-no-windows.png)
 
 **Matei David (Buoyant) 15:56 Uhr**\
 @Yonatan Taragin yup, the proxy relies on iptables to redirect networked calls. You can install the mesh of you use linux and opt out of windows pods, yes.\

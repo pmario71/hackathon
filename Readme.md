@@ -1,9 +1,23 @@
 # Readme
 
+## Goals
+
+* focus is on encrypting service-service communication
+* other features e.g. traffic splitting are not considered
+  
+* Complexity reduction Service-Service comunication
+  * provide a unified solution for encrypting communication and operational processes as certificate renewal
+
+* support also Windows-based workloads
+
 ## Prerequisits
+
+Hybrid linux-windows cluster is setup in Azure.
 
 * [Setting up an Azure cluster](docs/00_settingup_cluster.md)
 * [Understand Workloads used](docs/01_deploying_a_workload.md)
+
+# Summary
 
 ## Linkerd Evaluation
 
